@@ -1,10 +1,11 @@
 package mypackage;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Movie extends Product implements Buyable
+public class Movie extends Product implements Buyable, Serializable 
 {
-
+	private static final long serialVersionUID = 2887025539331191595L;
 	String title;
 	Genre genre;
 	long duration;

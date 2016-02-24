@@ -1,7 +1,10 @@
 package mypackage;
 
-public class Book extends Product
+import java.io.Serializable;
+
+public class Book extends Product implements Serializable
 {
+	private static final long serialVersionUID = -4365723442831533414L;
 	Person author;
 
 	public Book(String id, String title, Person person, Person author)

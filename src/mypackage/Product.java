@@ -1,7 +1,10 @@
 package mypackage;
 
-public abstract class Product
+import java.io.Serializable;
+
+public abstract class Product implements Serializable
 {
+	private static final long serialVersionUID = 3220844271670452067L;
 	String id;
 	String title;
 	Person person;

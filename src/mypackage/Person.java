@@ -1,7 +1,10 @@
 package mypackage;
 
-public class Person {
+import java.io.Serializable;
 
+public class Person implements Serializable {
+
+	private static final long serialVersionUID = -3681344594218912130L;
 	String firstName;
 	String lastName;
 	Gender gender;

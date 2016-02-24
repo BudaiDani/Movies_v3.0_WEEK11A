@@ -1,24 +1,23 @@
 package mypackage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RentManager
-{
-	public static int buyableObjects(List<Buyable> buyables)
-	{
-		int totalPrice = 0;
-		for (Buyable buyable : buyables)
-		{
-			totalPrice += buyable.getPrice();
-		}
-		return totalPrice;
-	}
+public class RentManager {
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws UnknownHostException, IOException
 	{
 		// customer
-		Person customer_1 = new Person("Budai", "Dani", Gender.MALE, 56544);
+		Person customer_1 = new Person(null, null, null, 0);
+		customer_1.firstName = "Budai";
+		customer_1.lastName = "Dani";
+		customer_1.gender = Gender.MALE;
+		customer_1.salary = 56544;
 
 		// movies
 		Person hanks = new Person("Tom", "Hanks", Gender.MALE, 5000);
@@ -70,25 +69,75 @@ public class RentManager
 		buyables.add((Game) diablo);
 		buyables.add((Game) braid);
 
-		System.out.println("MOVIES:");
-		System.out.println();
-		System.out.println(forrest_gump);
-		System.out.println();
-		System.out.println(deadpool);
-		System.out.println();
-		System.out.println("GAMES:");
-		System.out.println();
-		System.out.println(diablo);
-		System.out.println();
-		System.out.println(braid);
-		System.out.println();
-		System.out.println("BOOKS:");
-		System.out.println();
-		System.out.println(lotr);
-		System.out.println();
-		System.out.println(lotrtt);
-		System.out.println();
-		System.out.println("BUYABLE STUFF PRICE:");
-		System.out.println(buyableObjects(buyables));
+		// Start Client
+		try
+		{
+			System.out.println("Connecting...");
+			Socket client = new Socket("localhost", 5555);
+			System.out.println("Connected!");
+			ObjectInputStream streamFromServer = new ObjectInputStream(client.getInputStream());
+			ObjectOutputStream streamToServer = new ObjectOutputStream(client.getOutputStream());
+			System.out.println("PUT command");
+			send(streamToServer, Command.PUT);
+
+			System.out.println("Sending Movies");
+			System.out.println("Forrest Gump");
+			send(streamToServer, forrest_gump);
+			System.out.println("Forrest Gump sent");
+			System.out.println("Deadpool");
+			send(streamToServer, deadpool);
+			System.out.println("Deadpool sent");
+
+			System.out.println("Sending Games");
+			System.out.println("Diablo III");
+			send(streamToServer, diablo);
+			System.out.println("Diablo III sent");
+			System.out.println("Braid");
+			send(streamToServer, braid);
+			System.out.println("Braid sent");
+
+			System.out.println("Sending Books");
+			System.out.println("The Lord Of The Rings");
+			send(streamToServer, lotr);
+			System.out.println("The Lord Of The Rings sent");
+			System.out.println("The Lord Of The Rings : The Two Towers");
+			send(streamToServer, lotrtt);
+			System.out.println("The Lord Of The Rings : The Two Towers sent");
+
+			System.out.println("EXIT command");
+			send(streamToServer, Command.EXIT);
+			System.out.println("Shutdown!");
+
+			System.out.println("Closing the client...");
+			client.close();
+			System.out.println("Connection closed");
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static int buyableObjects(List<Buyable> buyables)
+	{
+		int totalPrice = 0;
+		for (Buyable buyable : buyables)
+		{
+			totalPrice += buyable.getPrice();
+		}
+		return totalPrice;
+	}
+
+	public static void send(ObjectOutputStream objectOutput, Object objectToSend)
+	{
+		try
+		{
+			objectOutput.write(0);
+			objectOutput.writeObject(objectToSend);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
